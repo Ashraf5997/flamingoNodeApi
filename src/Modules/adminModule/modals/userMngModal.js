@@ -1,0 +1,223 @@
+//var dbConn = require('../../config/db.config');
+var dbConn = require('../../../../config/db.config');
+
+var userMngModel = {
+    getAllUsers:{},
+    addUser:{},
+    updateUser:{},
+    searchUser:{},
+    getUserById:{},
+    deleteUser:{},
+    addRole:{},
+    getRoleByUserId:{},
+    deleteRole:{},
+}
+
+// DELETE ROLE BY USER RPID
+userMngModel.deleteRole = async( req , result ) =>{
+     let query = "DELETE FROM  rolepermission where rpId = ?";
+     dbConn.query(query , [req.params.rpId] , (err, res)=>{
+        if(err){
+          result(err, null)
+        }else{
+            result(null, res)
+        }
+     })
+}
+
+// GET ROLE BY USER ID
+userMngModel.getRoleByUserId = async( req , result) =>{
+    let query = " SELECT * FROM  rolepermission  LEFT JOIN role ON rolepermission.roleId = role.roleId LEFT JOIN tiles ON role.tileId = tiles.tileId WHERE rolepermission.userId =? ORDER BY tiles.tileName ASC";
+    dbConn.query(query,req.params.userId, (err, res)=>{
+        if(err){
+            result(err , null)
+        }else{
+             result(null , res)
+        }
+    })
+}
+
+// ADD ROLE 
+userMngModel.addRole = async(req, result) =>{
+    let delQry ="DELETE FROM rolepermission WHERE userId =?";
+    dbConn.query(delQry ,[req.params.userId],(err , res)=>{
+        if(err){
+            result(err , null);
+        }else{
+            req.body.forEach(role=>{
+                dbConn.query('INSERT INTO rolepermission SET?' , role)
+            })
+            result(null , true);
+        }
+    })
+}
+
+// DELETE USER BY ID 
+userMngModel.deleteUser = (req, result)=>{
+    let querry = "UPDATE users SET isdeleted ='Y' WHERE userId =?"
+    dbConn.query(querry,req.params.id, (err, res)=>{
+        if(err){
+            result(err , null)
+        }else{
+             result(null , res)
+        }
+    })
+}
+// GET USER BY ID 
+userMngModel.getUserById = (req, result)=>{
+     let query = " SELECT * FROM  users  WHERE userId =? ";
+    dbConn.query(query,req.params.id, (err, res)=>{
+        if(err){
+            result(err , null)
+        }else{
+             result(null , res)
+        }
+    })  
+}
+// ========= FETCHING ALL USERS  =============
+userMngModel.getAllUsers= (req , result) =>
+{
+  dbConn.query('SELECT * FROM users ' , (err , res)=>{
+      if(err)
+      {
+           result( err, null)
+      }else{
+        let limit = req.query.limit;
+        let page  = req.query.page;
+        let totalLength = res.length;
+        let totalPage   =  Math.trunc( totalLength/limit );
+        let startingLimit = (page - 1) * limit;
+        dbConn.query(`SELECT * FROM users  LIMIT  ${startingLimit} , ${limit}` , (err , res)=>{
+            if(err){
+                result( err, null)
+            }else{
+                let resObj ={ totalLength : totalLength, totalPage : totalPage ,data:res}
+                result( null, resObj)
+            } 
+        })
+      }
+  })
+}
+
+// ========= ADD USERS  =============
+userMngModel.addUser= (req , result) =>
+{
+    let userObj ={
+        username:req.body.username,
+        usercontact:req.body.usercontact,
+        isdeleted:req.body.isdeleted,
+        accesstype:req.body.accesstype,
+        password:req.body.password,
+        createdby:req.body.createdby,
+        createdon:new Date(),
+    }
+    dbConn.query('INSERT INTO users SET?' , userObj , (err , res)=>{
+        if(err)
+        {
+             result( err, null)
+        }else{
+           //  result(null ,res) 
+           req.body.selctdMldId.forEach(obj=>{
+              let moduleobj={
+                userId:res.insertId,
+                moduleId : obj.moduleId
+              }
+                dbConn.query('INSERT INTO modulepermission SET?' ,moduleobj )
+           })
+
+            req.body.selctdTileId.forEach(tileObj=>{
+                let tileobj={
+                userId:res.insertId,
+                tileId :tileObj.tileId, 
+                moduleId :tileObj.moduleId
+                }
+                dbConn.query('INSERT INTO tilepermission SET?' ,tileobj )
+            })
+
+            const Obj ={
+                 userId        :res.insertId,
+                 uploadedon    :new Date(),
+                 uploadedby    :req.body.username,
+                 updatedon     :null,
+                 profilePicUrl :null
+            }
+            dbConn.query('INSERT INTO profileimg SET?' , Obj , (err , res)=>{
+                 if(err)
+                 {
+                      result( err, null)
+                 }else{
+                      result(null ,res) 
+                 }
+            })
+
+        }
+    })
+}
+
+// ========= UPDATE USERS  =============
+userMngModel.updateUser= (req , result) =>
+{
+    req.body.isdeleted = ( req.body.isdeleted == true )?"Y":"N";
+    req.body.lastModifiedOn = new Date()
+    let updateQuery = "UPDATE users  SET username=? , usercontact =?,accesstype =?,isdeleted =? ,lastModifiedBy=? , lastModifiedOn=? WHERE userId =?"
+    dbConn.query(updateQuery,[req.body.username,req.body.usercontact,req.body.accesstype,req.body.isdeleted,req.body.lastModifiedBy, req.body.lastModifiedOn ,req.body.userId],(err,res)=>{ 
+        if(err)
+        {         
+            result( err, null)
+        }else{ 
+
+            let query = "DELETE  FROM modulepermission  WHERE userId = ? ";
+            dbConn.query(query,req.body.userId, (err, res)=>{
+                if(err){
+                    result(err , null)
+                }else{
+                    let query = "DELETE  FROM tilepermission  WHERE userId = ? ";
+                    dbConn.query(query,req.body.userId, (err, res)=>{
+                        if(err){
+                            result(err , null)
+                        }else{
+
+                            req.body.selctdMldId.forEach(obj=>{
+                                let moduleobj={
+                                  userId:req.body.userId,
+                                  moduleId : obj.moduleId
+                                }
+                                  dbConn.query('INSERT INTO modulepermission SET?' ,moduleobj )
+                             })
+                              req.body.selctdTileId.forEach(tileObj=>{
+                                  let tileobj={
+                                  userId:req.body.userId,
+                                  tileId :tileObj.tileId, 
+                                  moduleId :tileObj.moduleId
+                                  }
+                                  dbConn.query('INSERT INTO tilepermission SET?' ,tileobj )
+                              })
+
+                            result(null ,res)
+
+                        }
+                    })
+                }
+            })
+        }
+    })
+}
+
+// ========= SEARCH USERS  =============
+userMngModel.searchUser= (req , result) =>
+{
+    let username = req.body.username;
+    let usercontact = req.body.usercontact;
+    let userId   = req.body.userId;
+    dbConn.query("SELECT * FROM users WHERE username LIKE '%"+username+"' OR usercontact LIKE '%"+usercontact+"' OR  userId LIKE '%"+ userId+"'"  , (err , res)=>{
+        if(err)
+        {
+            result( err, null)
+        }else{
+            result( null, res)
+        }
+    })
+}
+
+//*******************    EXPORTING   ***************** */
+module.exports = userMngModel;
