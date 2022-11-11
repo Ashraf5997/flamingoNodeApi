@@ -4,7 +4,7 @@ const commonResObj = require('../../../middleWares/responses/commonResponse')
 const JwtService = require('../../../services/JwtService')
 const refreshJwtService = require('../../../services/refreshJwtService')
 const bcrypt = require('bcryptjs');
-//const fast2sms = require('fast-two-sms')
+const fast2sms = require('fast-two-sms')
 require("dotenv").config();
 const logger = require('../../../../config/logger.js')
 const moduleData = require('../../../../config/modulesData.js')
@@ -18,13 +18,88 @@ var commonServiceUrl = process.env.commonServiceUrl;
 const accessController = {
   userRegistration: {},
   userLogin: {},
+  verifyContactNumber:{},
+  verifyOtp:{},    
+  deleteOtp:{},    
   getModuleList:{},
   getTileList:{},
   getModuleByUserId:{},
   getTileByUserId:{},
   getRoleByTileId:{},
   getTileByModuleId:{},
-  getTileByModuleIdAndUserId:{}
+  getTileByModuleIdAndUserId:{},
+  resetPassword:{}
+}
+
+//  (13).  ====================  RESSET PASSWORD   ===========================
+accessController.resetPassword= ( req, res ,  next )=>{
+       bcrypt.hash(req.body.password, 10).then(resHash => {
+       req.body.password =resHash;
+       try{
+          accessModal.ressetPassword(req, (error, data) => {
+          if(error){ 
+            logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.resetPassword", error: error, Api: commonServiceUrl + req.url, status:500} });
+            commonResObj(res, 500 , { error: error }) 
+          } else{
+            commonResObj(res,200 , {Data: data})
+          }})
+    }catch(error){
+      logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.resetPassword", error: error, Api: commonServiceUrl + req.url, status:500} });
+      commonResObj(res, 500 , { error: error })
+    }
+    })
+ 
+}
+//  (12).  ====================  DELETE OTP NUMBER  ===========================
+accessController.deleteOtp= ( req, res ,  next )=>{
+  try{
+      accessModal.deleteOtp(req, (error, data) => {
+      if(error){ 
+         logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.deleteOtp", error: error, Api: commonServiceUrl + req.url, status:500} });
+         commonResObj(res, 500 , { error: error }) 
+      } else{
+         commonResObj(res,200 , {Data: data})
+      }})
+  }catch(error){
+    logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.deleteOtp", error: error, Api: commonServiceUrl + req.url, status:500} });
+    commonResObj(res, 500 , { error: error })
+  }
+}
+//  (11).  ====================  VERIFY OTP NUMBER  ===========================
+accessController.verifyOtp= ( req, res  )=>{
+  try{
+      accessModal.verifyOtp(req, (error, data) => {
+      if(error){  commonResObj(res, 500 , { error: error }) } else{
+        commonResObj(res,200 , {Data: data})
+      }})
+  }catch(error){
+    logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.verifyOtp", error: error, Api: commonServiceUrl + req.url, status:500} });
+    commonResObj(res, 500 , { error: error })
+  }
+}
+//  (10).  ====================  VERIFY CONTACT NUMBER  ===========================
+accessController.verifyContactNumber = ( req, res ,  next )=>{
+  try{
+      var contactPetrn = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+      if(contactPetrn.test(req.params.contact)){
+          accessModal.verifyContactNumber(req, (error, data) => {
+             if(error){  commonResObj(res, 500 , { error: error }) } else{
+                  /*  let number = req.params.contact;
+                    let API_KEY = process.env.API_KEY;
+                    let message = ` Hi ${data[0].username} Your 6 digits otp for reset-password is : ${otp} . Do not share with others regards: www.flamingo.in, THANKS`;
+                    const response = fast2sms.sendMessage({authorization:API_KEY,message:message,numbers:[number]})*/
+                  // if(response.return == true){
+                    commonResObj(res,200 , {Data: data})
+             }
+          })
+      }else{
+        logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.verifyContactNumber", error: "Please provide your registered contact number", Api: commonServiceUrl + req.url, status: 412} });
+        commonResObj(res, 412, { error: "Please provide valid contact number" })
+      }
+  }catch(error){
+    logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.verifyContactNumber", error: error, Api: commonServiceUrl + req.url, status:500} });
+    commonResObj(res, 500 , { error: error })
+  }
 }
 
 //  (1).  ====================  USER REGISTRATION ===========================
@@ -46,19 +121,19 @@ accessController.userRegistration = async (req, res, next) => {
     // calling accessModel 
     accessModal.userRegistration(userObj, (error, data) => {
       try {
-        if (error) {
-          logger.log({ level: "info", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userRegistration", error: error, Api: commonServiceUrl + req.url, status: 500 } });
-          commonResObj(res, 500 , { error: error.sqlMessage })
-        } else {
-          /* let API_KEY = process.env.API_KEY;
-           var password = req.body.password
-           let message = "Hi : "+req.body.username+" your password is "+password+" do not share with others regards: www.cookfast.in, THANKS";
-           //  const response =  fast2sms.sendMessage({authorization:API_KEY,message:message,numbers:[req.body.usercontact]})*/
-          commonResObj(res, 200, { data: userObj })
-        }
+          if (error) {
+            logger.log({ level: "info", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userRegistration", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+            commonResObj(res, 500 , { error: error.sqlMessage })
+          } else {
+            /* let API_KEY = process.env.API_KEY;
+            var password = req.body.password
+            let message = "Hi : "+req.body.username+" your password is "+password+" do not share with others regards: www.cookfast.in, THANKS";
+            //  const response =  fast2sms.sendMessage({authorization:API_KEY,message:message,numbers:[req.body.usercontact]})*/
+            commonResObj(res, 200, { data: userObj })
+          }
       } catch (error) {
-        logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userRegistration", error: error, Api: commonServiceUrl + req.url, status: 500 } });
-        commonResObj(res, 500, { error: error })
+          logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userRegistration", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+          commonResObj(res, 500, { error: error })
       }
     })
   })
@@ -68,31 +143,30 @@ accessController.userRegistration = async (req, res, next) => {
 
 //  (2).  ====================  USER LOGIN ===========================
 accessController.userLogin = async (req, res, next) => {
-
   // calling accessModel 
   accessModal.userLogin(req, (error, data) => {
     try {
       if (error) {
-        logger.log({ level: "info", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userLogin", error: error, Api: commonServiceUrl + req.url, status: 500 } });
-        commonResObj(res, 500, { error: error.sqlMessage })
+          logger.log({ level: "info", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userLogin", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+          commonResObj(res, 500, { error: error.sqlMessage })
       } else if (data != "") {
-        bcryptedPassword = data.userDetail[0].password;
-        bcrypt.compare(req.body.password, bcryptedPassword, (err, result) => {
-          if (result) {
-            // Generating Token 
-           let  access_token = JwtService.sign({ id:data.userDetail[0].userId, accesstype:data.userDetail[0].accesstype, fullname:data.userDetail[0].username, permission:data.userPermissions })
-           let  refresh_token = refreshJwtService.sign({ id:data.userDetail[0].userId, accesstype:data.userDetail[0].accesstype, fullname:data.userDetail[0].username, permission:data.userPermissions })
-            commonResObj(res, 200, { message: 'Access Verified', userData: data, access_token, refresh_token })
-          } else {
-            commonResObj(res, 401, { message: 'Access Denied Invalid Credentials' })
-          }
-        })
+          bcryptedPassword = data.userDetail[0].password;
+          bcrypt.compare(req.body.password, bcryptedPassword, (err, result) => {
+              if (result) {
+                // Generating Token 
+              let  access_token = JwtService.sign({ id:data.userDetail[0].userId, accesstype:data.userDetail[0].accesstype, fullname:data.userDetail[0].username, permission:data.userPermissions })
+              let  refresh_token = refreshJwtService.sign({ id:data.userDetail[0].userId, accesstype:data.userDetail[0].accesstype, fullname:data.userDetail[0].username, permission:data.userPermissions })
+                commonResObj(res, 200, { message: 'Access Verified', userData: data, access_token, refresh_token })
+              } else {
+                commonResObj(res, 401, { message: 'Access Denied Invalid Credentials' })
+              }
+          })
       } else {
-        commonResObj(res, 401, { message: 'Access Denied Invalid Credentials' })
+          commonResObj(res, 401, { message: 'Access Denied Invalid Credentials' })
       }
     } catch (error) {
-      logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userLogin", error: error, Api: commonServiceUrl + req.url, status: 500 } });
-      commonResObj(res, 500, { error: error })
+        logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userLogin", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+        commonResObj(res, 500, { error: error })
     }
   })
 }
@@ -296,6 +370,7 @@ accessController.getRoleByTileId = async (req, res, next) => {
     }
   })
 }
+
 module.exports = accessController;
 
 

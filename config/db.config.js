@@ -9,7 +9,7 @@ const dbConn = mysql.createConnection({
 
 dbConn.connect(function(error ){
     if(error)throw error;
-    console.log("Database connected successfully");
+    console.log(" DB CONNECTED SUCCESSFULLY");
 })
 
 

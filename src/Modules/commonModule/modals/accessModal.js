@@ -10,9 +10,73 @@ var accessModel = {
     getTileList:{},
     getModuleList:{},
     getTileByModuleIdAndUserId:{},
-    getRoleByTileId:{}
+    getRoleByTileId:{},
+    verifyContactNumber:{},
+    verifyOtp:{},
+    deleteOtp:{},
+    ressetPassword:{}
 }
-
+// =============  RESEET PASSWORD  =============
+accessModel.ressetPassword  = ( req , result ) =>{
+    dbConn.query('SELECT * FROM users WHERE usercontact=? ', [req.body.contact], (err , res)=>{
+        if(err){  result( err, null) }
+        else if(res !=""){
+            dbConn.query('UPDATE users SET password=? WHERE usercontact=? ', [req.body.password,req.body.contact], (err1 , res1)=>{
+                if(err1){ result( err1, null)}
+                else{ result( null, {message: `Password updated successfully`}) }
+            })
+        }
+    })
+}
+// =============   OTP DELETE =============
+accessModel.deleteOtp  = ( req , result ) =>{
+    dbConn.query('DELETE FROM otp WHERE  otpId=? ', [req.params.otpId], (err , res)=>{
+        if(err){  result( err, null) }
+        else{
+            result( null, {message: `OTP expired`})
+        }
+    })
+}
+// =============   OTP VERIFICATION =============
+accessModel.verifyOtp  = ( req , result ) =>{
+    dbConn.query('SELECT * FROM otp WHERE  otpId=? AND otp=? ', [req.params.otpId, req.params.otp ], (err , res)=>{
+        if(err){  result( err, null) }
+        else{
+            if(res != ""){
+                result( null, {message: `OTP verified successfully`,contact: res[0].contact})
+            }else{
+                result( null, {message: `Invalid OTP`,contact: null})
+            }
+        }
+    })
+}
+// =============  CONTACT VERIFICATION =============
+accessModel.verifyContactNumber = (req , result) =>{
+    dbConn.query('SELECT * FROM users WHERE  userContact=? ', req.params.contact , (err , res)=>{
+        if(err){  result( err, null) }
+        else{
+            if(res != ""){
+              let otpId =  Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2);
+                let otpObj={
+                    otpId :  otpId,
+                    otp   :  Math.floor(100000 + Math.random() * 900000),
+                    addedOn  : new Date(),
+                    addedBy  : res[0].username,
+                    contact  : res[0].usercontact
+                }
+                dbConn.query('INSERT INTO otp SET?' , otpObj , (err , res)=>{
+                    if(err){ result( err, null)
+                    }else{
+                        console.log("OTP :" , otpObj.otp)
+                        result( null, {message: `6 digits otp has sent to  : ${req.params.contact} `,otpId: otpId})
+                    }
+                })
+            }else{
+                result( null, {message: `Please enter your registered contact number `,otpId: null}  )
+            }
+        }
+    })
+}
 // =============   REGISTRATION =============
 accessModel.userRegistration = (reqObj , result) =>
 {
@@ -21,7 +85,6 @@ accessModel.userRegistration = (reqObj , result) =>
       {
          result( err, null)
       }else{
-         //  result(null ,res) 
           const Obj ={
                userId        :res.insertId,
                uploadedon    :new Date(),
@@ -30,8 +93,7 @@ accessModel.userRegistration = (reqObj , result) =>
                profilePicUrl :null,
           }
           dbConn.query('INSERT INTO profileimg SET?' , Obj , (err , res)=>{
-               if(err)
-               {
+               if(err) {
                     result( err, null)
                }else{
                     result(null ,res) 

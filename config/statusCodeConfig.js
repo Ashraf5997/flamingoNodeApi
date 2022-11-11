@@ -32,9 +32,6 @@ const statusCodes=(code)=>{
              case 500:
                value=  {result:false,message:"Internal server error "};
              break;
-            
-             
-     
              default:
          // code block
          }

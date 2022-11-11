@@ -49,7 +49,7 @@ app.use('/category/picture',express.static('picUpload/ctgryPics'));
 
 // COMMON MODULE  ROUTES  EXECUTIONS 
 app.use(commonService,accessRoutes);        //   ACCESS MANAGEMENT ROUTES
-app.use(commonService,cartRoutes);          //   CART  MANAGEMENT ROUTES
+app.use(commonService,cartRoutes);          //   CART MANAGEMENT ROUTES
 app.use(commonService,delvryAdrsRoutes);    //   DELIVERY ADDRESS MANAGEMENT ROUTES
 app.use(commonService,orderRoutes);         //   ORDER MANAGEMENT ROUTES
 
@@ -72,9 +72,9 @@ app.use((error,req,res,next)=>{
     res.send(error)
 })
 
-//app.use(express.static(path.join(__dirname,'public')));
+// app.use(express.static(path.join(__dirname,'public')));
 // SERVER STARTING 
 app.listen(port,()=>{
-    console.log(" Server is running on PORT : "+port);
+    console.log(" SERVER IS RUNNING ON PORT : "+port);
 })
 

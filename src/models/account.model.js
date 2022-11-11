@@ -42,7 +42,7 @@ accountModel.getAllAccountRequest= (result) =>
 //  ACCOUNT ACT DEACTIVE 
 accountModel.actDact= (reqData,result) =>
 {
-    dbConn.query("UPDATE user_account SETsssss accountStatus=?,actDate=?,TDate=?,SLITDate=?,activatedBy=? WHERE userId =?",[reqData.accountStatus,reqData.actDate,reqData.TDate,reqData.SLITDate,reqData.username,reqData.userId],(err,res)=>{ 
+    dbConn.query("UPDATE user_account SETssssst accountStatus=?,actDate=?,TDate=?,SLITDate=?,activatedBy=? WHERE userId =?",[reqData.accountStatus,reqData.actDate,reqData.TDate,reqData.SLITDate,reqData.username,reqData.userId],(err,res)=>{ 
     if(err)
     {         
         result( err, null)
