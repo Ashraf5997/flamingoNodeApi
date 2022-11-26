@@ -13,13 +13,13 @@ const userSchema = {
        selctdMldId  : joi.required(),
        selctdTileId : joi.required(),
   }),
-
   searchUserSchema : joi.object({
       username       : joi.string().max(50).allow(null),
       usercontact    : joi.number().integer().min(1000000000).message("Invalid phone number").max(9999999999).message("Invalid phone number").allow(null),
       userId         : joi.number().integer().allow(null),
+      userAccess     : joi.string().allow(null),
+      userStatus     : joi.string().allow(null),
   }),
-
   updateUserSchema : joi.object({
        username    : joi.string().max(50).required(),
        usercontact : joi.number().integer().min(1000000000).message("Invalid phone number").max(9999999999).message("Invalid phone number").required(),
@@ -31,7 +31,6 @@ const userSchema = {
        selctdMldId : joi.required(),
        selctdTileId: joi.required(),
   }),
-
   getAllUsers :joi.object({
     limit:joi.number().integer(),
     page : joi.number().integer(),

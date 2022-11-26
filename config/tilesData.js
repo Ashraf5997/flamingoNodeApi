@@ -17,6 +17,17 @@ const tileData = (reqData , resData  ) => {
                     filePath :"admin/module/service/order/management"
                 })
             }
+            if (tile.tileName == "Deliver Management") {
+                tileList.push({
+                    tPId: tile.id,
+                    tileId: tile.tileId,
+                    moduleId: tile.moduleId,
+                    tileName: tile.tileName,
+                    IconUrl: "./assets/Icons/orderManagement.png",
+                    filePath :"admin/module/service/deliver/management"
+
+                })
+            }
             if (tile.tileName == "Users Management") {
                 tileList.push({
                     tPId: tile.id,

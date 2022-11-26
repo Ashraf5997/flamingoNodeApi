@@ -38,12 +38,12 @@ productCntrl.searchProduct = async( req, res , next ) =>{
 }
 productCntrl.addProduct = async( req, res , next ) =>{
     let prodObj = {
-        productName  : req.body.productName,
-        productCtgry : req.body.productCtgry,
-        productQnty: req.body.productQnty,
-        addedon    : new Date(),
-        addedby    : req.body.addedby,
-        userId     : req.body.userId,
+        productName   : req.body.productName,
+        productCtgry  : req.body.productCtgry,
+        productQnty   : req.body.productQnty,
+        addedon       : new Date(),
+        addedby       : req.body.addedby,
+        userId        : req.body.userId,
         remainingQnty : req.body.remainingQnty,
         isOutOfStock  : req.body.isoutofstock,
         ratePerKg     : req.body.ratePerkg,
@@ -150,11 +150,11 @@ productCntrl.deleteProduct= async( req, res , next ) =>{
             logger.log({ level: "info", message: { file: "Modules/adminModule/controllers/" + filename, method: "productCntrl.deleteProduct", error: error, Api: adminServiceUrl + req.url, status: 500 } });
             commonResObj(res,500, { error: message })
         } else  {
-          commonResObj(res, 200, { message: 'Product deleted successfully', Data: data, })
+            commonResObj(res, 200, { message: 'Product deleted successfully', Data: data, })
         }   
       } catch (error) {
-        logger.log({ level: "error", message: { file: "Modules/adminModule/controllers/" + filename, method: "productCntrl.deleteProduct ", error: error, Api: adminServiceUrl + req.url, status: 500 } });
-        commonResObj(res, 500, { error: error })
+         logger.log({ level: "error", message: { file: "Modules/adminModule/controllers/" + filename, method: "productCntrl.deleteProduct ", error: error, Api: adminServiceUrl + req.url, status: 500 } });
+         commonResObj(res, 500, { error: error })
       }
     })
 }

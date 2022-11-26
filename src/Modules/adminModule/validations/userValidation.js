@@ -19,7 +19,7 @@ userValidation.addRole = async( req , res , next  )=>{
          if(ApiError.checkBody(req,res)){
             next()  
          }
-      }
+   }
 }
 userValidation.deleteRole = async( req , res , next  )=>{
    if(ApiError.checkUserRole(req,res,["WRITE_ROLE"])){
@@ -46,12 +46,13 @@ userValidation.addUserValidation =  async(req,res,next) =>{
    }
 }
 userValidation.searchUserValidation =  async(req,res,next) =>{
-   if(ApiError.checkUserRole(req,res,["WRITE_ROLE"])){
+   let boolen  = await ApiError.checkUserRole(req,res,["WRITE_ROLE"])
+   if( boolen ){
       if(ApiError.checkBody(req,res)){
          const value = await  userSchema.searchUserSchema.validate(req.body)
          ApiError.checkError(value,req,res,next)
       }
-   } 
+   }
 }
 userValidation.updateUserValidation =  async(req,res,next) =>{
    if(ApiError.checkUserRole(req,res,["WRITE_USER"])){

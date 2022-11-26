@@ -8,8 +8,12 @@ const dbConn = mysql.createConnection({
 });
 
 dbConn.connect(function(error ){
-    if(error)throw error;
-    console.log(" DB CONNECTED SUCCESSFULLY");
+    if(error){
+        //throw error;
+         console.log(" DB NOT CONNECTED");
+    }else{
+        console.log(" DB CONNECTED SUCCESSFULLY");
+    }
 })
 
 

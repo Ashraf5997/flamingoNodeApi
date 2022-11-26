@@ -35,7 +35,7 @@ router.get('/get/prodCtrgy/by/pcId/:id',prodCtgryCntrl.getProdCtgryById );
 router.put('/update/prodCtrgy/:id',auth,productValidation.updateProdCtgry,prodCtgryCntrl.updateProdCtgry );
 router.delete('/delete/prodCtrgy/:id', auth,productValidation.deleteProdCtgry, prodCtgryCntrl.deleteProdCtgry );
 
-
+router.post('/up/pics',prodCtgryCntrl.up) 
 //****************  EXPORTING ************** */
 module.exports = router;
 

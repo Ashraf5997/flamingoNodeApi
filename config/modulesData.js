@@ -4,7 +4,7 @@ const moduleData = (reqData , resData  ) => {
     let moduleData=reqData;
     let moduleList = []
     moduleData.forEach((module) => {
-
+        
             if(module.moduleName == "Admin"){
                 moduleList.push({
                 mPId:module.id,

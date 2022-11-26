@@ -61,7 +61,7 @@ exports.updateAddressDetail = async(req ,ress , next )=>{
                         }else if(data.affectedRows == 1){
                             ress.json({status:201 ,message:' Your address detail is  updated successfully ' ,UserId:data.insertId })    
                         }else{
-                            ress.json({status:500 ,message:' Internal server error try after some time ' ,UserId:data.insertId })    
+                            ress.json({status:500 ,message:' Internal server error try after sometime ' ,UserId:data.insertId })    
                         }
                     }  
                 })

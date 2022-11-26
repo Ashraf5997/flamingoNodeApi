@@ -20,10 +20,80 @@ const userMngCntrl = {
   updateUser: {},
   searchUser: {},
   getUserById:{},
+
   addRole:{},
   getRoleByUserId:{},
   deleteRole:{},
+
+  addDeliveryPatner:{},
+  getDeliveryPatner:{},
+  getAllDeliveryPatner:{},
+  updateDeliveryPatner:{}
+}     
+// UPDATE DELIVERY PARTNER TO ACTIVE OR INACTIVE
+userMngCntrl.updateDeliveryPatner = async( req , res , next )=>{
+  userMngModal.updateDeliveryPatner(req, (error, data) => {
+    if(error){
+      logger.log({ level: "error", message: { file: "Modules/adminModule/controllers/" + filename, method: "userMngCntrl.updateDeliveryPatner", error: error, Api: adminServiceUrl + req.url, status: 500 } });
+      commonResObj(res, 500, { error: error })
+    }else{
+      commonResObj(res, 200, { message: 'Delivery partner updated successfully', Data: data, })
+    }
+  })
 }
+
+// GET ALL DELIVERY PATNER LIST
+userMngCntrl.getAllDeliveryPatner = async( req , res , next )=>{
+  userMngModal.getAllDeliveryPatner(req, (error, data) => {
+    if(error){
+      logger.log({ level: "error", message: { file: "Modules/adminModule/controllers/" + filename, method: "userMngCntrl.getAllDeliveryPatner", error: error, Api: adminServiceUrl + req.url, status: 500 } });
+      commonResObj(res, 500, { error: error })
+    }else{
+      commonResObj(res, 200, { message: 'Delivery partner list fetched successfully', Data: data, })
+    }
+  })
+}
+
+//  GET DELIVERY PARTNER
+userMngCntrl.getDeliveryPatner = async( req , res , next )=>{
+  userMngModal.getDeliveryPatner(req, (error, data) => {
+    if(error){
+      logger.log({ level: "error", message: { file: "Modules/adminModule/controllers/" + filename, method: "userMngCntrl.getDeliveryPatner", error: error, Api: adminServiceUrl + req.url, status: 500 } });
+      commonResObj(res, 500, { error: error })
+    }else{
+      commonResObj(res, 200, { message: 'Delivery partner fetched successfully', Data: data, })
+    }
+  })
+}
+//  ADD DELIVERY PATNER
+userMngCntrl.addDeliveryPatner = async( req , res , next )=>{
+  req.body.status = "Active"
+  req.body.addedon = new Date()
+  userMngModal.addDeliveryPatner(req, (error, data) => {
+    try {
+      let statusCode = null
+        let message= null
+      if (error) {
+          if(error.errno == 1062){
+            statusCode = 409;
+            message = "You have already added."
+          }else{
+            statusCode = 500;
+            message = error.sqlMessage
+          }
+          logger.log({ level: "info", message: { file: "Modules/adminModule/controllers/" + filename, method: "userMngCntrl.addDeliveryPatner", error: error, Api: adminServiceUrl + req.url, status: statusCode } });
+          commonResObj(res, statusCode, { error: message })
+       
+      }  else {
+         commonResObj(res, 200, { message: 'Delivery parter added successfully', Data: data, })
+      } 
+    } catch (error) {
+        logger.log({ level: "error", message: { file: "Modules/adminModule/controllers/" + filename, method: "userMngCntrl.addDeliveryPatner", error: error, Api: adminServiceUrl + req.url, status: 500 } });
+        commonResObj(res, 500, { error: error })
+    }
+  })
+}
+
 // DELETE ROLE
 userMngCntrl.deleteRole = async( req , res , next )=>{
   userMngModal.deleteRole (req, (error, data) => {

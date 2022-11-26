@@ -7,12 +7,17 @@ var filename = path.basename(__dirname) + "/" + path.basename(__filename);
 var adminServiceUrl = process.env.adminServiceUrl;
 
 const prodCtgryCntrl = {
-    addProdCtgry: {},
-    updateProdCtgry: {},
-    deleteProdCtgry: {},
-    getAllProdCtgry:{},
-    getProdCtgryById:{}
+    addProdCtgry:     {},
+    updateProdCtgry:  {},
+    deleteProdCtgry:  {},
+    getAllProdCtgry:  {},
+    getProdCtgryById: {}, 
+    up :{} 
 }
+prodCtgryCntrl.up= async( req, res , next ) =>{
+  
+}
+
 prodCtgryCntrl.addProdCtgry = async( req, res , next ) =>{
     let prodCtgryObj = {
         pctgryName:req.body.prodCtgryName,

@@ -8,9 +8,57 @@ var userMngModel = {
     searchUser:{},
     getUserById:{},
     deleteUser:{},
+
     addRole:{},
     getRoleByUserId:{},
     deleteRole:{},
+
+    addDeliveryPatner:{},
+    getDeliveryPatner:{},
+    getAllDeliveryPatner:{},
+    updateDeliveryPatner:{}
+}
+
+// UPDATE  DELIVRY PARTNER
+userMngModel.updateDeliveryPatner = async( req, result )=>{
+    let updatedon = new Date()
+    dbConn.query('UPDATE dlvryptnrlocatn SET status =? ,  lastmodifiedby=? , lastmodifiedon=?   WHERE userId =?' , [ req.body.status ,req.body.modifiedby, updatedon, req.params.userId],(err , res)=>{
+        if(err)
+        {
+             result( err, null)
+        }else{
+             result(null ,res) 
+        }
+    })
+}
+
+// GET ALL DELIVRY PARTNER
+userMngModel.getAllDeliveryPatner = async( req, result )=>{
+    let query = " SELECT * FROM dlvryptnrlocatn";
+    dbConn.query(query, (err, res)=>{
+        if(err){ result(err , null)
+        }else{  result(null , res)}
+    })
+}
+
+// GET DELIVERY PARTNER
+userMngModel.getDeliveryPatner = async( req, result )=>{
+    let query = " SELECT * FROM dlvryptnrlocatn WHERE userId =?";
+    dbConn.query(query,req.params.userId, (err, res)=>{
+        if(err){ result(err , null)
+        }else{  result(null , res)}
+    })
+}
+// ADD  DELIVERY PARTNER
+userMngModel.addDeliveryPatner = async( req , result ) =>{
+    let query = "INSERT INTO dlvryptnrlocatn SET?"
+    dbConn.query(query  ,req.body, (err, res)=>{
+       if(err){
+           result(err, null)
+       }else{
+           result(null, res)
+       }
+    })
 }
 
 // DELETE ROLE BY USER RPID
@@ -78,18 +126,15 @@ userMngModel.getUserById = (req, result)=>{
 userMngModel.getAllUsers= (req , result) =>
 {
   dbConn.query('SELECT * FROM users ' , (err , res)=>{
-      if(err)
-      {
-           result( err, null)
+      if(err) { result( err, null)
       }else{
-        let limit = req.query.limit;
-        let page  = req.query.page;
-        let totalLength = res.length;
-        let totalPage   =  Math.trunc( totalLength/limit );
-        let startingLimit = (page - 1) * limit;
-        dbConn.query(`SELECT * FROM users  LIMIT  ${startingLimit} , ${limit}` , (err , res)=>{
-            if(err){
-                result( err, null)
+            let limit = req.query.limit;
+            let page  = req.query.page;
+            let totalLength = res.length;
+            let totalPage   =  Math.trunc( totalLength/limit );
+            let startingLimit = (page - 1) * limit;
+        dbConn.query(`SELECT * FROM users  ORDER BY userId DESC LIMIT  ${startingLimit} , ${limit}`  , (err , res)=>{
+            if(err){ result( err, null)
             }else{
                 let resObj ={ totalLength : totalLength, totalPage : totalPage ,data:res}
                 result( null, resObj)
@@ -99,7 +144,7 @@ userMngModel.getAllUsers= (req , result) =>
   })
 }
 
-// ========= ADD USERS  =============
+// ========= ADD USERS  =============+
 userMngModel.addUser= (req , result) =>
 {
     let userObj ={
@@ -112,11 +157,8 @@ userMngModel.addUser= (req , result) =>
         createdon:new Date(),
     }
     dbConn.query('INSERT INTO users SET?' , userObj , (err , res)=>{
-        if(err)
-        {
-             result( err, null)
+        if(err){ result( err, null)
         }else{
-           //  result(null ,res) 
            req.body.selctdMldId.forEach(obj=>{
               let moduleobj={
                 userId:res.insertId,
@@ -133,7 +175,6 @@ userMngModel.addUser= (req , result) =>
                 }
                 dbConn.query('INSERT INTO tilepermission SET?' ,tileobj )
             })
-
             const Obj ={
                  userId        :res.insertId,
                  uploadedon    :new Date(),
@@ -142,18 +183,13 @@ userMngModel.addUser= (req , result) =>
                  profilePicUrl :null
             }
             dbConn.query('INSERT INTO profileimg SET?' , Obj , (err , res)=>{
-                 if(err)
-                 {
-                      result( err, null)
-                 }else{
-                      result(null ,res) 
-                 }
+                 if(err) {   result( err, null)
+                 }else{  result(null ,res)  }
             })
 
         }
     })
 }
-
 // ========= UPDATE USERS  =============
 userMngModel.updateUser= (req , result) =>
 {
@@ -161,22 +197,16 @@ userMngModel.updateUser= (req , result) =>
     req.body.lastModifiedOn = new Date()
     let updateQuery = "UPDATE users  SET username=? , usercontact =?,accesstype =?,isdeleted =? ,lastModifiedBy=? , lastModifiedOn=? WHERE userId =?"
     dbConn.query(updateQuery,[req.body.username,req.body.usercontact,req.body.accesstype,req.body.isdeleted,req.body.lastModifiedBy, req.body.lastModifiedOn ,req.body.userId],(err,res)=>{ 
-        if(err)
-        {         
-            result( err, null)
-        }else{ 
-
-            let query = "DELETE  FROM modulepermission  WHERE userId = ? ";
+        if(err) {  result( err, null)
+        }else{ let query = "DELETE  FROM modulepermission  WHERE userId = ? ";
             dbConn.query(query,req.body.userId, (err, res)=>{
-                if(err){
-                    result(err , null)
+                if(err){  result(err , null)
                 }else{
                     let query = "DELETE  FROM tilepermission  WHERE userId = ? ";
                     dbConn.query(query,req.body.userId, (err, res)=>{
                         if(err){
                             result(err , null)
                         }else{
-
                             req.body.selctdMldId.forEach(obj=>{
                                 let moduleobj={
                                   userId:req.body.userId,
@@ -208,14 +238,12 @@ userMngModel.searchUser= (req , result) =>
 {
     let username = req.body.username;
     let usercontact = req.body.usercontact;
-    let userId   = req.body.userId;
-    dbConn.query("SELECT * FROM users WHERE username LIKE '%"+username+"' OR usercontact LIKE '%"+usercontact+"' OR  userId LIKE '%"+ userId+"'"  , (err , res)=>{
-        if(err)
-        {
-            result( err, null)
-        }else{
-            result( null, res)
-        }
+    let userId     = req.body.userId;
+    let userAccess   = req.body.userAccess;
+    let userStatus = req.body.userStatus;
+    dbConn.query("SELECT * FROM users WHERE username LIKE '%"+username+"' OR usercontact LIKE '%"+usercontact+"' OR  userId LIKE '%"+ userId+"' OR  accesstype LIKE '%"+ userAccess+"' OR isdeleted LIKE '%"+ userStatus+"' "  , (err , res)=>{
+        if(err) { result( err, null)
+        }else{ result( null, res) }
     })
 }
 

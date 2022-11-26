@@ -15,7 +15,6 @@ orderCntrl.deleteOrder = async( req , res , next )=>{
     orderModal.deleteOrder(req, (error, data) => {
         try{
             if (error) {
-                console.log("error , ",error)
                 logger.log({ level: "info", message: { file: "Modules/commonModule/controller" + filename, method: "orderCntrl.deleteOrder", error: error, Api:commonServiceUrl + req.url, status: 500 } });
                 commonResObj(res, 500, { error: error })
             } else{

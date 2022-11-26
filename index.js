@@ -46,13 +46,11 @@ app.use('/profile/picture',express.static('picUpload/proPics'));
 app.use('/product/picture',express.static('picUpload/productPics'));
 app.use('/category/picture',express.static('picUpload/ctgryPics'));
 
-
 // COMMON MODULE  ROUTES  EXECUTIONS 
 app.use(commonService,accessRoutes);        //   ACCESS MANAGEMENT ROUTES
 app.use(commonService,cartRoutes);          //   CART MANAGEMENT ROUTES
 app.use(commonService,delvryAdrsRoutes);    //   DELIVERY ADDRESS MANAGEMENT ROUTES
 app.use(commonService,orderRoutes);         //   ORDER MANAGEMENT ROUTES
-
 
 // ADMIN MODULE ROUTES EXECUTION
 app.use(adminService,userRoutes);      //   USER MANAGEMENT ROUTES
@@ -60,7 +58,6 @@ app.use(adminService,prodCtgryRoutes); //   PRODUCT CATEGORY  MANAGEMENT ROUTES
 app.use(adminService,productRoutes)    //   PRODUCT MANAGEMENT ROUTES
 app.use(adminService,serviceAddRoutes) //   SERVICE ADDRESS MANAGEMENT ROUTES
 app.use(adminService,adminOrderRoutes) //   ORDER MANAGEMENT ROUTES
-
 
 //  DEFAULT ROUTER ERROR
 app.use((req,res,next)=>{

@@ -122,8 +122,10 @@ accessController.userRegistration = async (req, res, next) => {
     accessModal.userRegistration(userObj, (error, data) => {
       try {
           if (error) {
-            logger.log({ level: "info", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userRegistration", error: error, Api: commonServiceUrl + req.url, status: 500 } });
-            commonResObj(res, 500 , { error: error.sqlMessage })
+             let status = 500
+              if(error.errno==1062){  status = 409}else{ status = 500}
+                logger.log({ level: "info", message: { file: "Modules/commonModule/controllers/" + filename, method: "accessController.userRegistration", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+                commonResObj(res, status , { error: error.sqlMessage })
           } else {
             /* let API_KEY = process.env.API_KEY;
             var password = req.body.password

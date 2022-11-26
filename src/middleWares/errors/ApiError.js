@@ -6,7 +6,12 @@ var filename = path.basename(__dirname)+"/"+path.basename(__filename);
 var commonServiceUrl = process.env.commonServiceUrl; 
 
 const  ApiErrors= {
-   /* badRequest:{}, internalServerError:{}, success:{}, created:{}, duplicate:{}, dataNotFound:{},*/
+/* badRequest:{},
+    internalServerError:{},
+    success:{}, created:{},
+    duplicate:{},
+    dataNotFound:{},
+*/
     checkBody:{},
     checkParam:{},
     checkError:{},
@@ -23,10 +28,17 @@ ApiErrors.checkUserRole = async(req,res,permission,next)=>{
                let isValidRole = false;
                const roleData = await JwtService.verify(token)
                roleData.permission.forEach((permision)=>{
-               if(permision.roleName == permission[0]){  isValidRole = true ; } })
-               if(isValidRole){ return isValidRole }  else{ commonResObj(res, 401, { message: "Not Authorisedsssd"}) }
+                   if(permision.roleName == permission[0]){  isValidRole = true ; } 
+               })
+               if(isValidRole){
+                 return isValidRole 
+               } else{
+                 commonResObj(res, 401, { message: "Not Authorised"})
+                 return false;
+               }
         }catch(err){
             commonResObj(res, 403, { message: process.env.FOUR_ZERO_THREE })
+            return false;
         }
     }
 }
@@ -50,7 +62,7 @@ ApiErrors.checkParam = (req,res ,next)=>{
     else if(req.params.moduleId){ return true; }
     else if(req.params.userId){ return true; }
     else if(req.query.page && req.query.limit){ return true;  }
-    else { commonResObj(res,400,{message:" parameter required "}) }   
+    else { commonResObj(res,400,{message:"parameter required "}) }   
 }
 
 
