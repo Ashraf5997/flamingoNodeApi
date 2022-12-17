@@ -20,6 +20,7 @@ const userMngCntrl = {
   updateUser: {},
   searchUser: {},
   getUserById:{},
+  getUsersByAccess:{},
 
   addRole:{},
   getRoleByUserId:{},
@@ -283,5 +284,22 @@ userMngCntrl.getAllUsers = async(req,res,next)=>{
     }
   })
 }
+
+// GET USER BY ACCESS TYPE
+userMngCntrl.getUsersByAccess = async(req,res,next)=>{
+   userMngModal.getUsersByAccess(req, (error, data) => {
+     try {
+       if (error) {
+         logger.log({ level: "info", message: { file: "Modules/adminModule/controllers/" + filename, method: "userMngCntrl.getUsersByAccess", error: error, Api: adminServiceUrl + req.url, status: 409 } });
+         commonResObj(res, 500, { error: error.sqlMessage })
+       } else  {
+         commonResObj(res, 200, { message: 'User list  fetched successfully', Data: data, })
+       } 
+     } catch (error) {
+       logger.log({ level: "error", message: { file: "Modules/adminModule/controllers/" + filename, method: "userMngCntrl.getUsersByAccess", error: error, Api: adminServiceUrl + req.url, status: 500 } });
+       commonResObj(res, 500, { error: error })
+     }
+   })
+ }
 
 module.exports = userMngCntrl;

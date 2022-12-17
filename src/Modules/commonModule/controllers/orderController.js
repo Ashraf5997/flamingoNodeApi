@@ -10,6 +10,22 @@ const orderCntrl = {
     getOrder:{},
     getOrderedProducts:{},
     deleteOrder:{},
+    filterOrder:{},
+}
+orderCntrl.filterOrder = async( req , res , next )=>{
+    orderModal.filterOrder(req, (error, data) => {
+        try{
+            if (error) {
+                logger.log({ level: "info", message: { file: "Modules/commonModule/controller" + filename, method: "orderCntrl.filterOrder", error: error, Api:commonServiceUrl + req.url, status: 500 } });
+                commonResObj(res, 500, { error: error })
+            } else{
+               commonResObj(res, 200, { message: 'Order fetched successfully', Data: data, })
+            }    
+        }catch(error) {
+            logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "orderCntrl.filterOrder", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+            commonResObj(res, 500, { error: error })
+        }
+    })
 }
 orderCntrl.deleteOrder = async( req , res , next )=>{
     orderModal.deleteOrder(req, (error, data) => {

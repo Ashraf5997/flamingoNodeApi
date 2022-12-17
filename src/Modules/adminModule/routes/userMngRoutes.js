@@ -15,6 +15,7 @@ router.post('/search/user' , auth , userValidation.searchUserValidation , userMn
 router.get('/get/user/:id' , auth , userMngCntrl.getUserById); 
 router.put('/update/user' ,  auth , userValidation.updateUserValidation, userMngCntrl.updateUser); 
 router.delete('/delete/user/:id'  , auth, userValidation.deleteUser ,userMngCntrl.deleteUser);
+router.get('/get/user/accessType/:accessType' ,    auth , userMngCntrl.getUsersByAccess); 
 
 // ================== DELIVERY PATNER  ROUTES
 router.post('/add/delivery/patner' , auth ,userMngCntrl.addDeliveryPatner )

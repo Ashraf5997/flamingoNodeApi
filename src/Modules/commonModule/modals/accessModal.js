@@ -111,7 +111,8 @@ accessModel.userLogin = (req , result) =>
       {
            result( err, null)
       }else{
-           dbConn.query('SELECT * FROM rolepermission LEFT JOIN role On rolepermission.roleId = role.roleId WHERE rolepermission.userId =? ', [res[0].userId] , (err , ress)=>{
+        if(res.length > 0){
+            dbConn.query('SELECT * FROM rolepermission LEFT JOIN role On rolepermission.roleId = role.roleId WHERE rolepermission.userId =? ', [res[0].userId] , (err , ress)=>{
                 if(err){
                    result( err, null)
                 }else{
@@ -120,19 +121,11 @@ accessModel.userLogin = (req , result) =>
                         userPermissions:ress
                     }
                     result(null ,userData) 
-                    /*let data = ""
-                    https.get("https://api.publicapis.org/entries",(resp)=>{
-                        resp.on('end', () => {
-                            try {
-                             
-                            } catch (er) {
-                                result(null ,userData) 
-                            }
-                          });
-
-                    })*/
                 }
             })
+        }else{
+            result( null, [])
+        }
       } 
   })
 }

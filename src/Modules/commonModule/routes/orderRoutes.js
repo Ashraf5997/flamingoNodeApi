@@ -7,6 +7,7 @@ router.post('/place/order', auth,orderController.placeOrder );//nis
 router.post('/get/order/:userId',orderController.getOrder );//nis
 router.post('/get/ordered/products/',orderController.getOrderedProducts );//nis
 router.post('/cancel/order',auth,orderController.deleteOrder );//nis
+router.post('/filter/order',auth,orderController.filterOrder );//nis
 
 
 //****************  EXPORTING ************** */

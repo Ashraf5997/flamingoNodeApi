@@ -9,7 +9,41 @@ const addressCntrl = {
     getAddresssByPincode:{},
     getDeliveryAddressByUserId:{},
     saveDeliveryAddrs:{},
+    updateDeliveryAddress:{},
+    deleteDeliveryAddress:{}
 }
+addressCntrl.deleteDeliveryAddress = async( req , res , next)=>{
+    addressModal.deleteDeliveryAddress( req , (error, data)=>{
+        try{
+            if (error) {
+                logger.log({ level: "info", message: { file: "Modules/commonModule/controller" + filename, method: "addressCntrl.deleteDeliveryAddress", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+                commonResObj(res, 500, { error: message })
+            } else{
+               commonResObj(res, 200, { message: ' delivery address deleted succesfully', Data: data, })
+            }    
+        }catch(error) {
+            logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "addressCntrl.deleteDeliveryAddress", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+            commonResObj(res, 500, { error: error })
+        }
+    })
+}
+
+addressCntrl.updateDeliveryAddress = async( req , res , next)=>{
+    addressModal.updateDeliveryAddress( req , (error, data)=>{
+        try{
+            if (error) {
+                logger.log({ level: "info", message: { file: "Modules/commonModule/controller" + filename, method: "addressCntrl.updateDeliveryAddress", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+                commonResObj(res, 500, { error: message })
+            } else{
+               commonResObj(res, 200, { message: ' delivery address updated succesfully', Data: data, })
+            }    
+        }catch(error) {
+            logger.log({ level: "error", message: { file: "Modules/commonModule/controllers/" + filename, method: "addressCntrl.updateDeliveryAddress", error: error, Api: commonServiceUrl + req.url, status: 500 } });
+            commonResObj(res, 500, { error: error })
+        }
+    })
+}
+
 addressCntrl.getDeliveryAddressByUserId = async( req , res , next)=>{
     addressModal.getDeliveryAddressByUserId( req , (error, data)=>{
         try{

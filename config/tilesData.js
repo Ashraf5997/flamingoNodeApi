@@ -17,13 +17,23 @@ const tileData = (reqData , resData  ) => {
                     filePath :"admin/module/service/order/management"
                 })
             }
+            if (tile.tileName == "Invoice Management") {
+                tileList.push({
+                    tPId: tile.id,
+                    tileId: tile.tileId,
+                    moduleId: tile.moduleId,
+                    tileName: tile.tileName,
+                    IconUrl: "./assets/Icons/invoiceMngment.png",
+                    filePath :"admin/module/service/invoice/management"
+                })
+            }
             if (tile.tileName == "Deliver Management") {
                 tileList.push({
                     tPId: tile.id,
                     tileId: tile.tileId,
                     moduleId: tile.moduleId,
                     tileName: tile.tileName,
-                    IconUrl: "./assets/Icons/orderManagement.png",
+                    IconUrl: "./assets/Icons/deliveryMngment.png",
                     filePath :"admin/module/service/deliver/management"
 
                 })

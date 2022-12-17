@@ -8,6 +8,7 @@ var userMngModel = {
     searchUser:{},
     getUserById:{},
     deleteUser:{},
+    getUsersByAccess:{},
 
     addRole:{},
     getRoleByUserId:{},
@@ -122,6 +123,20 @@ userMngModel.getUserById = (req, result)=>{
         }
     })  
 }
+
+
+// GET USER BY ACCESS TYPE
+userMngModel.getUsersByAccess = (req, result)=>{
+    let query = " SELECT * FROM  users  WHERE accesstype =? ";
+   dbConn.query(query,req.params.accessType, (err, res)=>{
+       if(err){
+           result(err , null)
+       }else{
+            result(null , res)
+       }
+   })  
+}
+
 // ========= FETCHING ALL USERS  =============
 userMngModel.getAllUsers= (req , result) =>
 {
@@ -224,7 +239,6 @@ userMngModel.updateUser= (req , result) =>
                               })
 
                             result(null ,res)
-
                         }
                     })
                 }
