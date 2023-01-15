@@ -42,6 +42,7 @@ productCntrl.addProduct = async( req, res , next ) =>{
         productCtgry  : req.body.productCtgry,
         productQnty   : req.body.productQnty,
         addedon       : new Date(),
+        unit          : req.body.unit,
         addedby       : req.body.addedby,
         userId        : req.body.userId,
         remainingQnty : req.body.remainingQnty,
@@ -84,6 +85,7 @@ productCntrl.updateProduct = async( req, res , next ) =>{
         remainingQnty  : req.body.remainingQnty,
         isOutOfStock   : req.body.isoutofstock,
         ratePerKg      : req.body.ratePerkg,
+        unit           : req.body.unit,
         // productImg : process.env.localhost+`/product/picture/${req.file.filename}`
    }
     productModal.updateProduct( prodObj ,req.params.id, (error, data) => {

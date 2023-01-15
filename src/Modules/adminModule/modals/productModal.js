@@ -35,13 +35,9 @@ productModal.addProduct = (body, result )=>{
 
 productModal.updateProduct = (req,id, result )=>{
     req.lastModifyDate = new Date()
-    dbConn.query("UPDATE productlist SET productName=?,productCtgry=?,productQnty=?,remainingQnty=?,isOutOfStock=?,ratePerKg=? ,lastModifyBy=?, lastModifyDate=?,userId=? WHERE productId =?",[req.productName, req.productCtgry,req.productQnty,req.remainingQnty,req.isOutOfStock,req.ratePerKg,req.lastModifyBy,req.lastModifyDate,req.userId,id],(err , res)=>{
-        if(err)
-        {
-             result( err, null)
-        }else{
-             result(null ,res) 
-        }
+    dbConn.query("UPDATE productlist SET productName=?,productCtgry=?,productQnty=?,remainingQnty=?,isOutOfStock=?,ratePerKg=? ,lastModifyBy=?, lastModifyDate=?,userId=? , unit=? WHERE productId =?",[req.productName, req.productCtgry,req.productQnty,req.remainingQnty,req.isOutOfStock,req.ratePerKg,req.lastModifyBy,req.lastModifyDate,req.userId,req.unit,id],(err , res)=>{
+        if(err) { result( err, null)
+        }else{ result(null ,res)  }
    })
 }
 

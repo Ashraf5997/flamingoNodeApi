@@ -4,10 +4,10 @@ const bodyParser    =   require('body-parser');
 const cors          =   require('cors');
 const app           =   express();
 const createHttpError = require('http-errors')
-var router = express.Router();
-//const path          =   require("path");
+var   router = express.Router();
+const path          =   require("path");
 require('dotenv').config()
-const port          =   process.env.PORT_NUMBER;
+const port =   process.env.PORT_NUMBER;
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
@@ -21,34 +21,6 @@ app.use( "/apiDoc/adminservice" , swaggerUI.serve,swaggerUI.setup(adminservicesw
 
 //const commonserviceswaggerJsdoc = YAML.load("./apiDoc/commonservice.yaml"); // commonservice
 //app.use( "/apiDoc/commonservice" , swaggerUI.serve,swaggerUI.setup(commonserviceswaggerJsdoc) )
-
-const invoice = {
-	shipping: {
-		name: 'John Doe',
-		address: '1234 Main Street',
-		city: 'San Francisco',
-		state: 'CA',
-		country: 'US',
-		postal_code: 94111,
-	},
-	items: [
-		{
-			item: 'TC 100',
-			description: 'Toner Cartridge',
-			quantity: 2,
-			amount: 6000,
-		},
-		{
-			item: 'USB_EXT',
-			description: 'USB Cable Extender',
-			quantity: 1,
-			amount: 2000,
-		},
-	],
-	subtotal: 8000,
-	paid: 0,
-	invoice_nr: 1234,
-};
 
 // SERVICES
 const commonService              =   process.env.commonServiceBaseUrl ;
@@ -68,7 +40,7 @@ const serviceAddRoutes   =   require('./src/Modules/adminModule/routes/serviceAd
 const adminOrderRoutes   =   require('./src/Modules/adminModule/routes/orderRoutes');
   
 //============ WELCOME TO HOME  ===============
-app.use("/home",(req,res)=>{
+app.use("/server",(req,res)=>{
     res.end("<h1 style='text-align:center;color:white;background-color:red'>Welcome to flamingo.in server </h1>")
 })
 app.use('/profile/picture',express.static('picUpload/proPics'));
@@ -90,17 +62,17 @@ app.use(adminService,serviceAddRoutes) //   SERVICE ADDRESS MANAGEMENT ROUTES
 app.use(adminService,adminOrderRoutes) //   ORDER MANAGEMENT ROUTES
 
 //  DEFAULT ROUTER ERROR
-app.use((req,res,next)=>{
+/*app.use((req,res,next)=>{
   next(createHttpError.NotFound())
 })
 app.use((error,req,res,next)=>{
     error.status = error.status || 500
     res.status(error.status);
     res.send(error)
-})
+})*/
 
-// app.use(express.static(path.join(__dirname,'public')));
 // SERVER STARTING 
+app.use(express.static(path.join(__dirname,'public')));
 app.listen(port,()=>{
     console.log(" SERVER IS RUNNING ON PORT : "+port);
 })

@@ -2,6 +2,7 @@
 var dbConn = require('../../../../config/db.config');
 
 var userMngModel = {
+
     getAllUsers:{},
     addUser:{},
     updateUser:{},
@@ -24,8 +25,7 @@ var userMngModel = {
 userMngModel.updateDeliveryPatner = async( req, result )=>{
     let updatedon = new Date()
     dbConn.query('UPDATE dlvryptnrlocatn SET status =? ,  lastmodifiedby=? , lastmodifiedon=?   WHERE userId =?' , [ req.body.status ,req.body.modifiedby, updatedon, req.params.userId],(err , res)=>{
-        if(err)
-        {
+        if(err){
              result( err, null)
         }else{
              result(null ,res) 
@@ -88,15 +88,24 @@ userMngModel.getRoleByUserId = async( req , result) =>{
 
 // ADD ROLE 
 userMngModel.addRole = async(req, result) =>{
+    console.log("______REQ " , req.body)
     let delQry ="DELETE FROM rolepermission WHERE userId =?";
     dbConn.query(delQry ,[req.params.userId],(err , res)=>{
         if(err){
             result(err , null);
         }else{
+            let index= 0;
             req.body.forEach(role=>{
+                index++
                 dbConn.query('INSERT INTO rolepermission SET?' , role)
             })
-            result(null , true);
+            console.log(req.body.length);
+            console.log(index)
+            if(req.body.length == index){
+               // result(null , true);
+            }
+
+           // result(null , true);
         }
     })
 }
@@ -148,13 +157,13 @@ userMngModel.getAllUsers= (req , result) =>
             let totalLength = res.length;
             let totalPage   =  Math.trunc( totalLength/limit );
             let startingLimit = (page - 1) * limit;
-        dbConn.query(`SELECT * FROM users  ORDER BY userId DESC LIMIT  ${startingLimit} , ${limit}`  , (err , res)=>{
-            if(err){ result( err, null)
-            }else{
-                let resObj ={ totalLength : totalLength, totalPage : totalPage ,data:res}
-                result( null, resObj)
-            } 
-        })
+            dbConn.query(`SELECT * FROM users  ORDER BY userId DESC LIMIT  ${startingLimit} , ${limit}`  , (err , res)=>{
+                if(err){ result( err, null)
+                }else{
+                    let resObj ={ totalLength : totalLength, totalPage : totalPage ,data:res}
+                    result( null, resObj)
+                } 
+            })
       }
   })
 }
